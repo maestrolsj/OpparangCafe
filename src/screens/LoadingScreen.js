@@ -11,11 +11,13 @@ import {
     Text,
     View
 } from 'react-native';
-import    {Navigation} from 'react-native-navigation';
 
-
+import    {Navigation}  from 'react-native-navigation';
 import * as LoginAction from '../actions/LoginAction';
-import {connect} from 'react-redux'
+import {connect}        from 'react-redux';
+
+var  themeColor='#cf3273';
+
 
 class LoadingScreen extends Component {
 
@@ -36,7 +38,7 @@ class LoadingScreen extends Component {
                         title         : '첫번째화면',
                         subtitle      : '섭타이틀',
                         navigatorStyle: {
-                            navBarHidden:false,
+                            navBarHidden:true,
 
                         }
                     },
@@ -52,12 +54,13 @@ class LoadingScreen extends Component {
                     }]
                 ,
                 appStyle: {
-                    tabBarBackgroundColor    : '#0f2362',
+                    tabBarBackgroundColor    : themeColor,
                     tabBarButtonColor        : '#ffffff',
-                    tabBarSelectedButtonColor: '#63d7cc'
+                    tabBarSelectedButtonColor: '#63d7cc',
+
                 },
                 tabsStyle: { // optional, **iOS Only** add this if you want to style the tab bar beyond the defaults
-                    tabBarBackgroundColor    : 'rgb(255, 255, 255)',
+                    tabBarBackgroundColor    :  themeColor,
                     tabBarSelectedButtonColor: '#2980B9',
                     // tabBarButtonColor: '#ffffff'
                 }
