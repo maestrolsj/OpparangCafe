@@ -51,6 +51,7 @@ class Tab1 extends Component {
         this.state = {
             data: [],
             wordData:[],
+            wordListHeight:0,
             modalVisible: false,
             searchViewFlag:false,
             isOpen    : false,
@@ -140,7 +141,7 @@ class Tab1 extends Component {
                 {!this.state.searchViewFlag&&<View style={styles.searchBar}>
                     <View style={{flex:1}}></View>
                     <Text style={styles.naviTitle}>오빠랑까페</Text>
-                    <TouchableOpacity onPress={()=>{this.setState({searchViewFlag:true, wordData:[{key:'roy',name:'로이카페'},{key:'santorini',name:'산토리니'},{key:'beach',name:'비치카페'}]})}} style={{flex:1,alignItems:'flex-end'}}><Ionicons name="md-search" color="#FFFFFF" size={23} style={{marginRight:20}} /></TouchableOpacity>
+                    <TouchableOpacity onPress={()=>{this.setState({searchViewFlag:true,wordListHeight:400, wordData:[{key:'roy',name:'로이카페'},{key:'santorini',name:'산토리니'},{key:'beach',name:'비치카페'}]})}} style={{flex:1,alignItems:'flex-end'}}><Ionicons name="md-search" color="#FFFFFF" size={23} style={{marginRight:20}} /></TouchableOpacity>
                </View>}
                 {this.state.searchViewFlag&&<View style={styles.textView}>
 
@@ -155,7 +156,7 @@ class Tab1 extends Component {
 
                     />
 
-                    <TouchableOpacity onPress={()=>{this.setState({searchViewFlag:false, wordData:[]})}}  style={{flex:1,alignItems:'flex-end'}}><Ionicons name="md-close-circle" color="#FFFFFF" size={23} style={{marginRight:20}}/></TouchableOpacity>
+                    <TouchableOpacity onPress={()=>{this.setState({searchViewFlag:false, wordListHeight:0, wordData:[]})}}  style={{flex:1,alignItems:'flex-end'}}><Ionicons name="md-close-circle" color="#FFFFFF" size={23} style={{marginRight:20}}/></TouchableOpacity>
 
                 </View>}
 
@@ -197,7 +198,7 @@ class Tab1 extends Component {
                            <Ionicons name="md-checkbox"  size={18}   color={this.state.IncheonYN?themeColor:'gray'} /><Text>Incheon</Text>
                        </TouchableOpacity>
 
-                       <TouchableOpacity onPress={() => this.refs.localFilterModal.close()} ><Text>close</Text></TouchableOpacity>
+                       <TouchableOpacity onPress={() => this.refs.localFilterModal.close()}><Text>close</Text></TouchableOpacity>
                    </LocalFilterModal>
                </View>
                 <FlatList
@@ -205,7 +206,7 @@ class Tab1 extends Component {
                     initialNumToRender    = {20}
                     onEndReachedThreshold = {3}
                     renderItem            = {this.renderWordRow}
-                    style                 = {{position:'absolute',top:40 ,width:SCREEN_WIDTH, height:400}}
+                    style                 = {{position:'absolute',top:40 ,width:SCREEN_WIDTH, height:this.state.wordListHeight}}
                 />
             </View>
 
@@ -306,7 +307,7 @@ const styles = StyleSheet.create({
     },
     renderRowView : {flex:1,flexDirection:'row',height:120   },
     countView     : {flexDirection:'row',justifyContent:'flex-end',alignItems:'center',height:25},
-    textView :{ width:SCREEN_WIDTH,height:40, flexDirection:'row',backgroundColor:themeColor,alignItems:'center'}
+    textView      : { width:SCREEN_WIDTH,height:40, flexDirection:'row',backgroundColor:themeColor,alignItems:'center'}
 
 
 });
