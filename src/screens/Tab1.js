@@ -14,7 +14,9 @@ import {
     Dimensions,
     FlatList,
     TouchableOpacity,
-    Image
+    Image,
+    Animated,
+    TextInput
 } from 'react-native';
 
 import {connect}        from 'react-redux';
@@ -23,6 +25,7 @@ import Ionicons         from 'react-native-vector-icons/Ionicons';
 import LocalFilterModal from 'react-native-modalbox';
 import RenderRow        from './RenderRow';
 import Tab1Detail       from './Tab1Detail';
+
 
 var FirebaseHndler = require('./FirebaseHndler');
 
@@ -40,14 +43,16 @@ class Tab1 extends Component {
         super(props);
 
         //---------------- Binding to Custom Func ----------------
-        this.gotoDetail   = this.gotoDetail.bind(this);
-        this.onEndReached = this.onEndReached.bind(this);
-        this.renderRow    = this.renderRow.bind(this);
+        this.gotoDetail     = this.gotoDetail.bind(this)    ;
+        this.onEndReached   = this.onEndReached.bind(this)  ;
+        this.renderRow      = this.renderRow.bind(this)     ;
+
 
         this.state = {
             data: [],
+            wordData:[],
             modalVisible: false,
-
+            searchViewFlag:false,
             isOpen    : false,
             isDisabled: false,
             //---- Local Filter
@@ -55,6 +60,7 @@ class Tab1 extends Component {
             GangHwaYN          : false,
             IncheonYN          : false,
             SongdoYN           : false,
+
         }
     }
 
@@ -68,6 +74,7 @@ class Tab1 extends Component {
         }, function(err){
             console.log(err)
         });
+
     }
 
 
@@ -82,17 +89,7 @@ class Tab1 extends Component {
 
     };
 
-   /* onRefresh() {
-        var that = this;
 
-        limit = 5;
-        FirebaseHndler.getCafeList(limit).then(function (items) {
-            that.setState({data: [ ...items ]});
-        }, function(err){
-            console.log(err)
-        });
-
-    }*/
     gotoDetail(item){
         this.props.navigator.push({
             screen           : 'Tab1Detail', // unique ID registered with Navigation.registerScreen
@@ -123,6 +120,14 @@ class Tab1 extends Component {
         );
     }
 
+    renderWordRow(item){
+
+        return(
+            <View key={item.item.key} style={{width:SCREEN_WIDTH,height:30,backgroundColor:'white', borderWidth:0.2, borderColor:'#EAEAEA',justifyContent:'center'}}>
+                <Text style={{marginLeft:10,color:'black'}}>{item.item.name}</Text>
+            </View>
+        );
+    }
 
 
     render() {
@@ -132,11 +137,28 @@ class Tab1 extends Component {
 
             <View style={{flex: 1, backgroundColor:'#f5f5f5'}}>
 
-               <View style={styles.searchBar}>
+                {!this.state.searchViewFlag&&<View style={styles.searchBar}>
                     <View style={{flex:1}}></View>
                     <Text style={styles.naviTitle}>오빠랑까페</Text>
-                    <View style={{flex:1,alignItems:'flex-end'}}><Ionicons name="md-search" color="#FFFFFF" size={20} style={{marginRight:20}} /></View>
-               </View>
+                    <TouchableOpacity onPress={()=>{this.setState({searchViewFlag:true, wordData:[{key:'roy',name:'로이카페'},{key:'santorini',name:'산토리니'},{key:'beach',name:'비치카페'}]})}} style={{flex:1,alignItems:'flex-end'}}><Ionicons name="md-search" color="#FFFFFF" size={23} style={{marginRight:20}} /></TouchableOpacity>
+               </View>}
+                {this.state.searchViewFlag&&<View style={styles.textView}>
+
+                    <View style={{flex:1,alignItems:'center',justifyContent:'center'}}><Ionicons name="md-search" color="#FFFFFF" size={23}  /></View>
+                    <TextInput
+                        style={{width:250, height: 35, color:'white' }}
+                        onChangeText={(text) => this.setState({text})}
+                        value={this.state.text}
+                        placeholder="카페 혹은 지명을 입력하세요"
+                        placeholderTextColor={'white'}
+                        selectionColor={'white'}
+
+                    />
+
+                    <TouchableOpacity onPress={()=>{this.setState({searchViewFlag:false, wordData:[]})}}  style={{flex:1,alignItems:'flex-end'}}><Ionicons name="md-close-circle" color="#FFFFFF" size={23} style={{marginRight:20}}/></TouchableOpacity>
+
+                </View>}
+
                <View style={styles.filterContainer}>
                     <TouchableOpacity onPress={() => this.refs.localFilterModal.open()} style={styles.filterButton}>
                         <Text style={{color:'#000000'}}>지역 : </Text><Text style={styles.filterText}>전체</Text>
@@ -151,7 +173,7 @@ class Tab1 extends Component {
                     </TouchableOpacity>
                </View>
 
-               <View style={{marginTop:5}}>
+               <View>
                     <FlatList
                         data                  = {this.state.data}
                         initialNumToRender    = {20}
@@ -178,7 +200,13 @@ class Tab1 extends Component {
                        <TouchableOpacity onPress={() => this.refs.localFilterModal.close()} ><Text>close</Text></TouchableOpacity>
                    </LocalFilterModal>
                </View>
-
+                <FlatList
+                    data                  = {this.state.wordData}
+                    initialNumToRender    = {20}
+                    onEndReachedThreshold = {3}
+                    renderItem            = {this.renderWordRow}
+                    style                 = {{position:'absolute',top:40 ,width:SCREEN_WIDTH, height:400}}
+                />
             </View>
 
         );
@@ -272,12 +300,14 @@ const styles = StyleSheet.create({
     searchBar:{
         flexDirection  : 'row',
         width          : SCREEN_WIDTH,
-        height         : 30,
+        height         : 40,
         backgroundColor: themeColor,
         alignItems     : 'center'
     },
     renderRowView : {flex:1,flexDirection:'row',height:120   },
-    countView : {flexDirection:'row',justifyContent:'flex-end',alignItems:'center',height:25}
+    countView     : {flexDirection:'row',justifyContent:'flex-end',alignItems:'center',height:25},
+    textView :{ width:SCREEN_WIDTH,height:40, flexDirection:'row',backgroundColor:themeColor,alignItems:'center'}
+
 
 });
 
