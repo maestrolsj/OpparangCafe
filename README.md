@@ -8,7 +8,7 @@ This is a Mobile Application for searching specification Cafe except for franchi
 - Checking distance between user and cafe using GPS<br>
  
 <div style="display:flex;">
-<img src="https://github.com/maestrolsj/OpparangCafe/blob/master/src/img/screenShot/cafeDetail.png?raw=true" width="200">
 <img src="https://github.com/maestrolsj/OpparangCafe/blob/master/src/img/screenShot/cafeList.png?raw=true"   width="200">
+<img src="https://github.com/maestrolsj/OpparangCafe/blob/master/src/img/screenShot/cafeDetail.png?raw=true" width="200">
 </div>
 
