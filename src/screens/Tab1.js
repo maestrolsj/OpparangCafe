@@ -19,12 +19,14 @@ import {
     TextInput
 } from 'react-native';
 
-import {connect}        from 'react-redux';
-import * as LoginAction from '../actions/LoginAction';
-import Ionicons         from 'react-native-vector-icons/Ionicons';
-import LocalFilterModal from 'react-native-modalbox';
-import RenderRow        from './RenderRow';
-import Tab1Detail       from './Tab1Detail';
+import {connect}          from 'react-redux';
+import * as LoginAction   from '../actions/LoginAction';
+import Ionicons           from 'react-native-vector-icons/Ionicons';
+import LocalFilterModal   from 'react-native-modalbox';
+import ConceptFilterModal from 'react-native-modalbox';
+import SortFileterModal   from 'react-native-modalbox';
+import RenderRow          from './RenderRow';
+import Tab1Detail         from './Tab1Detail';
 
 
 var FirebaseHndler = require('./FirebaseHndler');
@@ -62,7 +64,34 @@ class Tab1 extends Component {
             GangHwaYN     : false, // 강화
             IncheonYN     : false,
             SongdoYN      : false,
+            //
+            //가평
+            //춘천
+            //천안
+            //평택
+            //태안
+            //서산
+            //당진
+            //아산
+            //
 
+            //---- Concept Filter
+            TotalConceptYN  : true,  // 전체선택
+            BookYN          : false, // 북카페
+            OceanYN         : false, // 오션카페
+            GardenYN        : false, // 가든보유
+            KtraditionalYN  : false, // 한옥풍
+            EroupeYN        : false, // 유럽풍
+            GalleryYN       : false, // 갤러리
+            DesertYN        : false, // 디저트
+            BrunchYN        : false, // 브런치
+            ForestYN        : false, // 숲속
+            NightViewYN     : false, // 야경뷰
+            ArtificialYN    : false, // 공예카페
+            FlowerYN        : false, // 플라워
+            StreetYN        : false, // 카페거리
+            RoofTopYN       : false, // 루프탑
+            DinningYN       : false, // 다이닝카페
         }
     }
 
@@ -176,7 +205,7 @@ class Tab1 extends Component {
                         <Text style={{color:'#000000'}}>지역 : </Text><Text style={styles.filterText}>전체</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={() => {  this.setState({conceptFilterModal: true})  }}  style={[styles.filterButton,{borderLeftWidth:4, borderRightWidth:4, borderColor:'#f5f5f5'}]}>
+                    <TouchableOpacity onPress={() => this.refs.conceptFilterModal.open()}  style={[styles.filterButton,{borderLeftWidth:4, borderRightWidth:4, borderColor:'#f5f5f5'}]}>
                         <Text style={{color:'#000000'}}>컨셉 : </Text><Text style={styles.filterText}>전체</Text>
                     </TouchableOpacity>
 
@@ -196,7 +225,7 @@ class Tab1 extends Component {
                         style                 = {{margin:10}}
                     />
                    <LocalFilterModal
-                       style         = {{   alignItems: 'center' }}
+                       style         = {{alignItems: 'center' }}
                        ref           = {"localFilterModal"}
                        swipeToClose  = {true}
                        onClosed      = {this.onClose}
@@ -215,6 +244,27 @@ class Tab1 extends Component {
 
                        <TouchableOpacity onPress={() => this.refs.localFilterModal.close()}><Text>close</Text></TouchableOpacity>
                    </LocalFilterModal>
+
+                   <ConceptFilterModal
+                       style         = {{alignItems: 'center' }}
+                       ref           = {"conceptFilterModal"}
+                       swipeToClose  = {true}
+                       onClosed      = {this.onClose}
+                       onOpened      = {this.onOpen}
+                       onClosingState= {this.onClosingState}>
+                       <View><Text>지역선택</Text></View>
+                       <TouchableOpacity style={styles.localFilterItem} onPress={() => {  this.setState({TotalConceptYN: !this.state.TotalConceptYN, TotalConceptYN:true, BookYN:false, OceanYN:false})  }}  >
+                           <Ionicons name="md-checkbox"  size={18}   color={this.state.TotalConceptYN?themeColor:'gray'} /><Text style={{marginLeft:15}}>전체</Text>
+                       </TouchableOpacity>
+                       <TouchableOpacity style={styles.localFilterItem} onPress={() => {  this.setState({BookYN: !this.state.BookYN, TotalConceptYN:false})  }}  >
+                           <Ionicons name="md-checkbox"  size={18}   color={this.state.BookYN?themeColor:'gray'} /><Text style={{marginLeft:15}}>북카페</Text>
+                       </TouchableOpacity>
+                       <TouchableOpacity style={styles.localFilterItem} onPress={() => {  this.setState({OceanYN: !this.state.OceanYN, TotalConceptYN:false})  }}  >
+                           <Ionicons name="md-checkbox"  size={18}   color={this.state.OceanYN?themeColor:'gray'} /><Text style={{marginLeft:15}}>오션뷰</Text>
+                       </TouchableOpacity>
+
+                       <TouchableOpacity onPress={() => this.refs.conceptFilterModal.close()}><Text>close</Text></TouchableOpacity>
+                   </ConceptFilterModal>
                </View>
                 <TouchableOpacity
                     onPress={() => {  this.setState({wordListHeight:0})  }}
