@@ -31,6 +31,7 @@ var FirebaseHndler = require('./FirebaseHndler');
 
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
+const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 var limit      = 10;
 var themeColor ='#cf3273';
@@ -124,7 +125,7 @@ class Tab1 extends Component {
     renderWordRow(item){
 
         return(
-            <View key={item.item.key} style={{width:SCREEN_WIDTH,height:30,backgroundColor:'white', borderWidth:0.2, borderColor:'#EAEAEA',justifyContent:'center'}}>
+            <View key={item.item.key} style={{width:SCREEN_WIDTH,height:40,backgroundColor:'white', borderBottomWidth:0.1, borderBottomColor:'#FCFCFC',justifyContent:'center'}}>
                 <Text style={{marginLeft:10,color:'black'}}>{item.item.name}</Text>
             </View>
         );
@@ -141,14 +142,28 @@ class Tab1 extends Component {
                 {!this.state.searchViewFlag&&<View style={styles.searchBar}>
                     <View style={{flex:1}}></View>
                     <Text style={styles.naviTitle}>오빠랑까페</Text>
-                    <TouchableOpacity onPress={()=>{this.setState({searchViewFlag:true,wordListHeight:400, wordData:[{key:'roy',name:'로이카페'},{key:'santorini',name:'산토리니'},{key:'beach',name:'비치카페'}]})}} style={{flex:1,alignItems:'flex-end'}}><Ionicons name="md-search" color="#FFFFFF" size={23} style={{marginRight:20}} /></TouchableOpacity>
+                    <TouchableOpacity onPress={()=>{this.setState({searchViewFlag:true,wordListHeight:SCREEN_HEIGHT-80})}} style={{flex:1,alignItems:'flex-end'}}><Ionicons name="md-search" color="#FFFFFF" size={23} style={{marginRight:20}} /></TouchableOpacity>
                </View>}
                 {this.state.searchViewFlag&&<View style={styles.textView}>
 
-                    <View style={{flex:1,alignItems:'center',justifyContent:'center'}}><Ionicons name="md-search" color="#FFFFFF" size={23}  /></View>
+                    <Ionicons name="md-search" color="#FFFFFF" size={23} style={{flex:1,textAlign:'center'}} />
                     <TextInput
-                        style={{width:250, height: 35, color:'white' }}
-                        onChangeText={(text) => this.setState({text})}
+                        style={{width:250, height: 40, color:'white'}}
+                        onChangeText={
+                            (text) => {
+                                let wordArr=[];
+
+                                this.setState({text});
+
+                                this.state.data.map(
+                                    function(x){
+                                       if(x.title.includes(text)) wordArr.push({key:x.title, name:x.title});
+                                    });
+                                if(text.length > 0)  this.setState({wordData:wordArr});
+                                else this.setState({wordData:[]});
+
+                            }
+                        }
                         value={this.state.text}
                         placeholder="카페 혹은 지명을 입력하세요"
                         placeholderTextColor={'white'}
@@ -201,13 +216,18 @@ class Tab1 extends Component {
                        <TouchableOpacity onPress={() => this.refs.localFilterModal.close()}><Text>close</Text></TouchableOpacity>
                    </LocalFilterModal>
                </View>
-                <FlatList
-                    data                  = {this.state.wordData}
-                    initialNumToRender    = {20}
-                    onEndReachedThreshold = {3}
-                    renderItem            = {this.renderWordRow}
-                    style                 = {{position:'absolute',top:40 ,width:SCREEN_WIDTH, height:this.state.wordListHeight}}
-                />
+                <TouchableOpacity
+                    onPress={() => {  this.setState({wordListHeight:0})  }}
+                    style={{position:'absolute',top:40  ,width:SCREEN_WIDTH,height:this.state.wordListHeight}}>
+                    <FlatList
+                        data                  = {this.state.wordData}
+                        initialNumToRender    = {20}
+                        onEndReachedThreshold = {3}
+                        renderItem            = {this.renderWordRow}
+                        style                 = {{width:SCREEN_WIDTH,height:200,backgroundColor:'rgba(0,0,0,0.3)'}}
+                    />
+
+                </TouchableOpacity>
             </View>
 
         );
@@ -307,7 +327,7 @@ const styles = StyleSheet.create({
     },
     renderRowView : {flex:1,flexDirection:'row',height:120   },
     countView     : {flexDirection:'row',justifyContent:'flex-end',alignItems:'center',height:25},
-    textView      : { width:SCREEN_WIDTH,height:40, flexDirection:'row',backgroundColor:themeColor,alignItems:'center'}
+    textView      : {width:SCREEN_WIDTH,height:40, flexDirection:'row',backgroundColor:themeColor,alignItems:'center'}
 
 
 });
