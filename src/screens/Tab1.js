@@ -58,8 +58,8 @@ class Tab1 extends Component {
             isOpen        : false,
             isDisabled    : false,
             //---- Local Filter
-            TotalLocalYN  : true,
-            GangHwaYN     : false,
+            TotalLocalYN  : true,  // 전체선택
+            GangHwaYN     : false, // 강화
             IncheonYN     : false,
             SongdoYN      : false,
 
@@ -74,7 +74,6 @@ class Tab1 extends Component {
         FirebaseHndler.getCafeList(limit).then(function (items) {
             that.setState({data: [ ...items ]});
         }, function(err){ console.log(err) });
-
     }
 
 
@@ -88,7 +87,6 @@ class Tab1 extends Component {
         }, function(err){   console.log(err)     });
 
     };
-
 
     gotoDetail(item){
         this.props.navigator.push({
@@ -106,8 +104,6 @@ class Tab1 extends Component {
 
     }
 
-
-
     renderRow(item){
 
         return (
@@ -123,7 +119,7 @@ class Tab1 extends Component {
     renderWordRow(item){
 
         return(
-            <View key={item.item.key} style={{flexDirection:'row',width:SCREEN_WIDTH,height:40,backgroundColor:'white', borderBottomWidth:0.1, borderBottomColor:'#FCFCFC',alignItems:'center'}}>
+            <View key={item.item.key} style={styles.searchWordrow}>
                 <Text style={{marginLeft:10,color:'black'}}>{item.item.name}</Text>
                 <Text style={{marginLeft:15,color:'gray',fontSize:12}}>{item.item.address1} </Text>
                 <Text style={{marginLeft:5,color:'gray',fontSize:12}}>{item.item.address2} </Text>
@@ -154,10 +150,10 @@ class Tab1 extends Component {
                                 let wordArr=[];
 
                                 this.setState({text});
-
                                 this.state.data.map(
                                     function(x){
-                                       if(x.title.includes(text) || x.address1.includes(text) || x.address2.includes(text)) wordArr.push({key:x.title, name:x.title , address1:x.address1, address2:x.address2});
+                                       if(x.title.includes(text) || x.address1.includes(text) || x.address2.includes(text))
+                                           wordArr.push({key:x.title, name:x.title , address1:x.address1, address2:x.address2});
                                     });
                                 if(text.length > 0)  this.setState({wordData:wordArr});
                                 else this.setState({wordData:[]});
@@ -200,17 +196,21 @@ class Tab1 extends Component {
                         style                 = {{margin:10}}
                     />
                    <LocalFilterModal
-                       style         = {{ justifyContent: 'center',   alignItems: 'center'}}
+                       style         = {{   alignItems: 'center' }}
                        ref           = {"localFilterModal"}
                        swipeToClose  = {true}
                        onClosed      = {this.onClose}
                        onOpened      = {this.onOpen}
                        onClosingState= {this.onClosingState}>
-                       <View>
-                           <Text>지역선택</Text>
-                       </View>
-                       <TouchableOpacity style={{flexDirection:'row',width:200,backgroundColor:'gold'}} onPress={() => {  this.setState({IncheonYN: !this.state.IncheonYN, TotalLocalYN:false})  }}  >
-                           <Ionicons name="md-checkbox"  size={18}   color={this.state.IncheonYN?themeColor:'gray'} /><Text>Incheon</Text>
+                       <View><Text>지역선택</Text></View>
+                       <TouchableOpacity style={styles.localFilterItem} onPress={() => {  this.setState({TotalLocalYN: !this.state.TotalLocalYN, TotalLocalYN:true, IncheonYN:false, GangHwaYN:false})  }}  >
+                           <Ionicons name="md-checkbox"  size={18}   color={this.state.TotalLocalYN?themeColor:'gray'} /><Text style={{marginLeft:15}}>전체</Text>
+                       </TouchableOpacity>
+                       <TouchableOpacity style={styles.localFilterItem} onPress={() => {  this.setState({IncheonYN: !this.state.IncheonYN, TotalLocalYN:false})  }}  >
+                           <Ionicons name="md-checkbox"  size={18}   color={this.state.IncheonYN?themeColor:'gray'} /><Text style={{marginLeft:15}}>인천</Text>
+                       </TouchableOpacity>
+                       <TouchableOpacity style={styles.localFilterItem} onPress={() => {  this.setState({GangHwaYN: !this.state.GangHwaYN, TotalLocalYN:false})  }}  >
+                           <Ionicons name="md-checkbox"  size={18}   color={this.state.GangHwaYN?themeColor:'gray'} /><Text style={{marginLeft:15}}>강화</Text>
                        </TouchableOpacity>
 
                        <TouchableOpacity onPress={() => this.refs.localFilterModal.close()}><Text>close</Text></TouchableOpacity>
@@ -325,10 +325,11 @@ const styles = StyleSheet.create({
         backgroundColor: themeColor,
         alignItems     : 'center'
     },
+    localFilterItem:{flexDirection:'row',height:40,width:200,alignItems:'center' },
     renderRowView : {flex:1,flexDirection:'row',height:120   },
     countView     : {flexDirection:'row',justifyContent:'flex-end',alignItems:'center',height:25},
-    textView      : {width:SCREEN_WIDTH,height:40, flexDirection:'row',backgroundColor:themeColor,alignItems:'center'}
-
+    textView      : {width:SCREEN_WIDTH,height:40, flexDirection:'row',backgroundColor:themeColor,alignItems:'center'},
+    searchWordrow : {flexDirection:'row',width:SCREEN_WIDTH,height:40,backgroundColor:'white', borderBottomWidth:0.1, borderBottomColor:'#FCFCFC',alignItems:'center'}
 
 });
 
