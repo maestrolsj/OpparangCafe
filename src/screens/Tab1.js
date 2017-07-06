@@ -30,7 +30,7 @@ import Tab1Detail       from './Tab1Detail';
 var FirebaseHndler = require('./FirebaseHndler');
 
 
-const SCREEN_WIDTH = Dimensions.get('window').width;
+const SCREEN_WIDTH  = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 var limit      = 10;
@@ -50,18 +50,18 @@ class Tab1 extends Component {
 
 
         this.state = {
-            data: [],
-            wordData:[],
-            wordListHeight:0,
-            modalVisible: false,
-            searchViewFlag:false,
-            isOpen    : false,
-            isDisabled: false,
+            data          : [],
+            wordData      : [],
+            wordListHeight: 0,
+            modalVisible  : false,
+            searchViewFlag: false,
+            isOpen        : false,
+            isDisabled    : false,
             //---- Local Filter
-            TotalLocalYN       : true,
-            GangHwaYN          : false,
-            IncheonYN          : false,
-            SongdoYN           : false,
+            TotalLocalYN  : true,
+            GangHwaYN     : false,
+            IncheonYN     : false,
+            SongdoYN      : false,
 
         }
     }
@@ -73,9 +73,7 @@ class Tab1 extends Component {
         var that = this;
         FirebaseHndler.getCafeList(limit).then(function (items) {
             that.setState({data: [ ...items ]});
-        }, function(err){
-            console.log(err)
-        });
+        }, function(err){ console.log(err) });
 
     }
 
@@ -125,8 +123,10 @@ class Tab1 extends Component {
     renderWordRow(item){
 
         return(
-            <View key={item.item.key} style={{width:SCREEN_WIDTH,height:40,backgroundColor:'white', borderBottomWidth:0.1, borderBottomColor:'#FCFCFC',justifyContent:'center'}}>
+            <View key={item.item.key} style={{flexDirection:'row',width:SCREEN_WIDTH,height:40,backgroundColor:'white', borderBottomWidth:0.1, borderBottomColor:'#FCFCFC',alignItems:'center'}}>
                 <Text style={{marginLeft:10,color:'black'}}>{item.item.name}</Text>
+                <Text style={{marginLeft:15,color:'gray',fontSize:12}}>{item.item.address1} </Text>
+                <Text style={{marginLeft:5,color:'gray',fontSize:12}}>{item.item.address2} </Text>
             </View>
         );
     }
@@ -157,7 +157,7 @@ class Tab1 extends Component {
 
                                 this.state.data.map(
                                     function(x){
-                                       if(x.title.includes(text)) wordArr.push({key:x.title, name:x.title});
+                                       if(x.title.includes(text) || x.address1.includes(text) || x.address2.includes(text)) wordArr.push({key:x.title, name:x.title , address1:x.address1, address2:x.address2});
                                     });
                                 if(text.length > 0)  this.setState({wordData:wordArr});
                                 else this.setState({wordData:[]});
