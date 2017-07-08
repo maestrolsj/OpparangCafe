@@ -152,7 +152,7 @@ class Tab1 extends Component {
         return(
             <TouchableHighlight underlayColor='#F6F6F6' onPress={()=> this.setState({wordListHeight:0,wordData:[] ,text:item.item.name})} key={item.item.key} style={styles.searchWordrow}>
                 <View style={{flexDirection:'row',height:40, alignItems:'center'}}>
-                    <Text style={{marginLeft:10,color:'black'}}>{item.item.name}</Text>
+                    <Text style={{marginLeft:10,color:'black'}}>{item.item.title}</Text>
                     <Text style={{marginLeft:15,color:'gray',fontSize:12}}>{item.item.address1}</Text>
                     <Text style={{marginLeft:5,color:'gray',fontSize:12}}>{item.item.address2}</Text>
                 </View>
@@ -186,19 +186,19 @@ class Tab1 extends Component {
                                 this.state.data.map(
                                     function(x){
                                        if(x.title.includes(text) || x.address1.includes(text) || x.address2.includes(text))
-                                           wordArr.push({key:x.title, name:x.title , address1:x.address1, address2:x.address2});
+                                           wordArr.push(x);
                                     });
                                 if(text.length > 0)  this.setState({wordData:wordArr});
                                 else this.setState({wordData:[]});
 
                             }
                         }
-                        value={this.state.text}
-                        placeholder="카페 혹은 지명을 입력하세요"
-                        placeholderTextColor={'white'}
-                        selectionColor={'white'}
-
+                        value               = {this.state.text}
+                        placeholder         = "카페 혹은 지명을 입력하세요"
+                        placeholderTextColor= {'white'}
+                        selectionColor      = {'white'}
                     />
+
 
                     <TouchableOpacity onPress={()=>{this.setState({searchViewFlag:false, wordListHeight:0,text:'' ,wordData:[]})}}  style={{flex:1,alignItems:'flex-end'}}><Ionicons name="md-close-circle" color="#FFFFFF" size={23} style={{marginRight:20}}/></TouchableOpacity>
 
@@ -272,16 +272,17 @@ class Tab1 extends Component {
                </View>
                 <TouchableOpacity
                     onPress={() => {  this.setState({wordListHeight:0})  }}
-                    style={{position:'absolute',top:40  ,width:SCREEN_WIDTH,height:this.state.wordListHeight}}>
+                    style={{position:'absolute',top:40  ,width:SCREEN_WIDTH,height:this.state.wordListHeight, backgroundColor:'rgba(0,0,0,0.3)'}}>
                     <FlatList
                         data                  = {this.state.wordData}
                         initialNumToRender    = {20}
                         onEndReachedThreshold = {3}
                         renderItem            = {this.renderWordRow}
-                        style                 = {{width:SCREEN_WIDTH,height:200,backgroundColor:'rgba(0,0,0,0.3)'}}
+                        style                 = {{}}
                     />
-
                 </TouchableOpacity>
+
+
             </View>
 
         );
