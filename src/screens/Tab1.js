@@ -16,8 +16,9 @@ import {
     TouchableOpacity,
     Image,
     Animated,
-    TextInput,
-    TouchableHighlight
+    TextInput, Keyboard,
+    TouchableHighlight,
+    Platform
 } from 'react-native';
 
 import {connect}          from 'react-redux';
@@ -35,10 +36,14 @@ var FirebaseHndler = require('./FirebaseHndler');
 
 const SCREEN_WIDTH  = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
+var CAFELIST_HEIGHT;
 
 var limit      = 10;
 var themeColor ='#cf3273';
 
+var wordSearchYN = false;
+
+var quickWordList =[];
 
 class Tab1 extends Component {
 
@@ -46,12 +51,15 @@ class Tab1 extends Component {
     constructor(props) {
         super(props);
 
+        if (Platform.OS === 'ios') CAFELIST_HEIGHT = SCREEN_HEIGHT -145;
+        else   CAFELIST_HEIGHT = SCREEN_HEIGHT -160;
+
         //---------------- Binding to Custom Func ----------------
         this.gotoDetail     = this.gotoDetail.bind(this)    ;
         this.onEndReached   = this.onEndReached.bind(this)  ;
         this.renderRow      = this.renderRow.bind(this)     ;
         this.renderWordRow  = this.renderWordRow.bind(this) ;
-
+        this.wordClick      = this.wordClick.bind(this);
 
         this.state = {
             data          : [],
@@ -100,23 +108,38 @@ class Tab1 extends Component {
 
     componentDidMount(){
 
+        console.log("=============+#######  componentDidMount  ######+===============");
         //FirebaseHndler.setCafeList();
+
+       quickWordList = FirebaseHndler.getQuickWordList();
+       console.log(quickWordList);
+       this.getCafeList();
+    }
+
+    getCafeList(){
+
         var that = this;
         FirebaseHndler.getCafeList(limit).then(function (items) {
             that.setState({data: [ ...items ]});
         }, function(err){ console.log(err) });
+
     }
 
 
     onEndReached(){
 
-        var that = this;
+        if(wordSearchYN == false) {
+            console.log("=============+#######  onEndReached  ######+===============");
+            var that = this;
 
-        limit = limit+10;
-        FirebaseHndler.getCafeList(limit).then(function (items) {
-            that.setState({data: [ ...items ]});
-        }, function(err){   console.log(err)     });
-
+            limit = limit + 10;
+            FirebaseHndler.getCafeList(limit).then(function (items) {
+                that.setState({data: [...items]});
+            }, function (err) {
+                console.log(err)
+            });
+        }
+        else limit = 10;
     };
 
     gotoDetail(item){
@@ -147,10 +170,25 @@ class Tab1 extends Component {
         );
     }
 
+    wordClick(item) {
+
+        var that = this;
+        wordSearchYN = true;
+        Keyboard.dismiss();
+           this.setState({wordListHeight: 0, wordData: [], text: item.item.title});
+
+            FirebaseHndler.getOneCafe(item.item.title).then(function (items) {
+
+                that.setState({data: [ items ]});
+            }, function(err){ console.log(err) });
+
+    }
+
     renderWordRow(item){
 
+        console.log(item.item);
         return(
-            <TouchableHighlight underlayColor='#F6F6F6' onPress={()=> this.setState({wordListHeight:0,wordData:[] ,text:item.item.name})} key={item.item.key} style={styles.searchWordrow}>
+            <TouchableHighlight underlayColor='#F6F6F6' onPress={()=>{this.wordClick(item)}}  key={item.item.key} style={styles.searchWordrow}>
                 <View style={{flexDirection:'row',height:40, alignItems:'center'}}>
                     <Text style={{marginLeft:10,color:'black'}}>{item.item.title}</Text>
                     <Text style={{marginLeft:15,color:'gray',fontSize:12}}>{item.item.address1}</Text>
@@ -162,7 +200,6 @@ class Tab1 extends Component {
 
 
     render() {
-
 
         return (
 
@@ -183,10 +220,11 @@ class Tab1 extends Component {
                                 let wordArr=[];
 
                                 this.setState({text});
-                                this.state.data.map(
+                                quickWordList.map(
                                     function(x){
                                        if(x.title.includes(text) || x.address1.includes(text) || x.address2.includes(text))
                                            wordArr.push(x);
+
                                     });
                                 if(text.length > 0)  this.setState({wordData:wordArr});
                                 else this.setState({wordData:[]});
@@ -200,17 +238,20 @@ class Tab1 extends Component {
                     />
 
 
-                    <TouchableOpacity onPress={()=>{this.setState({searchViewFlag:false, wordListHeight:0,text:'' ,wordData:[]})}}  style={{flex:1,alignItems:'flex-end'}}><Ionicons name="md-close-circle" color="#FFFFFF" size={23} style={{marginRight:20}}/></TouchableOpacity>
+                    <TouchableOpacity onPress={()=>{
+                        wordSearchYN=false;
+                        this.setState({searchViewFlag:false, wordListHeight:0,text:'' ,wordData:[]});
+                        this.getCafeList();
+                        }
+                    }
+                        style={{flex:1,alignItems:'flex-end'}}><Ionicons name="md-close-circle" color="#FFFFFF" size={23} style={{marginRight:20}}/>
+                    </TouchableOpacity>
 
                 </View>}
 
                <View style={styles.filterContainer}>
                     <TouchableOpacity onPress={() => this.refs.localFilterModal.open()} style={styles.filterButton}>
                         <Text style={{color:'#000000'}}>지역 : </Text><Text style={styles.filterText}>전체</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => this.refs.conceptFilterModal.open()}  style={[styles.filterButton,{borderLeftWidth:4, borderRightWidth:4, borderColor:'#f5f5f5'}]}>
-                        <Text style={{color:'#000000'}}>컨셉 : </Text><Text style={styles.filterText}>전체</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity onPress={() => {  this.setState({sortFilterModal: true})  }}  style={styles.filterButton}>
@@ -231,7 +272,7 @@ class Tab1 extends Component {
                    <LocalFilterModal
                        style         = {{alignItems: 'center' }}
                        ref           = {"localFilterModal"}
-                       swipeToClose  = {true}
+                       swipeToClose  = {false}
                        onClosed      = {this.onClose}
                        onOpened      = {this.onOpen}
                        onClosingState= {this.onClosingState}>
@@ -274,6 +315,7 @@ class Tab1 extends Component {
                     onPress={() => {  this.setState({wordListHeight:0})  }}
                     style={{position:'absolute',top:40  ,width:SCREEN_WIDTH,height:this.state.wordListHeight, backgroundColor:'rgba(0,0,0,0.3)'}}>
                     <FlatList
+                        keyboardShouldPersistTaps = {'handled'}
                         data                  = {this.state.wordData}
                         initialNumToRender    = {20}
                         onEndReachedThreshold = {3}

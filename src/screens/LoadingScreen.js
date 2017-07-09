@@ -15,6 +15,7 @@ import {
 import    {Navigation}  from 'react-native-navigation';
 import * as LoginAction from '../actions/LoginAction';
 import {connect}        from 'react-redux';
+var FirebaseHndler = require('./FirebaseHndler');
 
 var  themeColor='#cf3273';
 
@@ -24,52 +25,60 @@ class LoadingScreen extends Component {
 
     componentDidMount(){
 
+
         this.props._setLogin(true);
 
-        setTimeout(()=>{
+        FirebaseHndler.getQuickWord().then(function (items) {
 
-            Navigation.startTabBasedApp({
-                tabs: [
-                    {
-                        label         : 'Tab1',
-                        screen        : 'Tab1',
-                        icon          : require('../img/home.png'),
-                        selectedIcon  : require('../img/home2.png'),
-                        title         : '첫번째화면',
-                        subtitle      : '섭타이틀',
-                        navigatorStyle: {
-                            navBarHidden:true,
 
-                        }
+            setTimeout(()=>{
+
+                Navigation.startTabBasedApp({
+                    tabs: [
+                        {
+                            label         : 'Tab1',
+                            screen        : 'Tab1',
+                            icon          : require('../img/home.png'),
+                            selectedIcon  : require('../img/home2.png'),
+                            title         : '첫번째화면',
+                            subtitle      : '섭타이틀',
+                            navigatorStyle: {
+                                navBarHidden:true,
+
+                            }
+                        },
+                        {
+                            label: 'Tab2',
+                            screen: 'Tab2',
+                            icon: require('../img/my.png'),
+                            selectedIcon    : require('../img/my2.png'),
+                            title           : '두번째화면',
+                            navigatorStyle: {
+                                navBarHidden:true,
+                            }
+                        }]
+                    ,
+                    appStyle: {
+                        tabBarBackgroundColor    : themeColor,
+                        tabBarButtonColor        : '#ffffff',
+                        tabBarSelectedButtonColor: '#63d7cc',
+
                     },
-                    {
-                        label: 'Tab2',
-                        screen: 'Tab2',
-                        icon: require('../img/my.png'),
-                        selectedIcon    : require('../img/my2.png'),
-                        title           : '두번째화면',
-                        navigatorStyle: {
-                            navBarHidden:true,
-                        }
-                    }]
-                ,
-                appStyle: {
-                    tabBarBackgroundColor    : themeColor,
-                    tabBarButtonColor        : '#ffffff',
-                    tabBarSelectedButtonColor: '#63d7cc',
+                    tabsStyle: { // optional, **iOS Only** add this if you want to style the tab bar beyond the defaults
+                        tabBarBackgroundColor    :  themeColor,
+                        tabBarSelectedButtonColor: '#2980B9',
+                        // tabBarButtonColor: '#ffffff'
+                    }
 
-                },
-                tabsStyle: { // optional, **iOS Only** add this if you want to style the tab bar beyond the defaults
-                    tabBarBackgroundColor    :  themeColor,
-                    tabBarSelectedButtonColor: '#2980B9',
-                    // tabBarButtonColor: '#ffffff'
-                }
+                });
 
-            });
+            }, 2000)
+
+        }, function(err){ console.log(err) });
 
 
 
-        }, 2000)
+
         //서버작업
     }
 

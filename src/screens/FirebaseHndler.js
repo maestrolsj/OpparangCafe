@@ -17,6 +17,7 @@ const firebaseConfig = {
     storageBucket: "",
 };
 
+var quickWordList=[];
 
 const firebaseApp = firebase.initializeApp(firebaseConfig);
 
@@ -25,14 +26,13 @@ var getCafeList = function (limit) {
     return new Promise(
         function (resolve, reject) {
 
-           var itemsRef = firebaseApp.database().ref().child('CafeList').orderByChild('favorite').limitToFirst(limit);
-
+           var itemsRef = firebaseApp.database().ref('CafeList').orderByChild('favorite').limitToFirst(limit);
+         //   var itemsRef = firebaseApp.database().ref('CafeList').orderByChild('address2').startAt('길상');
            var result=[];
 
             itemsRef.once('value', (snap) => {
 
                 snap.forEach((child) => {
-
                     result.push(child.val());
 
                 });
@@ -42,6 +42,51 @@ var getCafeList = function (limit) {
         }
     )
 }
+
+
+var getOneCafe = function (searchWord) {
+
+    return new Promise(
+        function (resolve, reject) {
+
+            var itemsRef = firebaseApp.database().ref('CafeList').child(searchWord);
+
+            itemsRef.once('value', (snap) => {
+
+                resolve(snap._value);
+
+            });
+        }
+    )
+}
+
+var getQuickWord = function () {
+
+    return new Promise(
+        function (resolve, reject) {
+
+            var itemsRef = firebaseApp.database().ref('QuickWord');
+
+
+            itemsRef.once('value', (snap) => {
+
+                snap.forEach((child) => {
+                    quickWordList.push(child.val());
+
+                });
+                resolve(quickWordList);
+
+            });
+        }
+    )
+}
+
+var getQuickWordList = function () {
+
+    return quickWordList;
+}
+
+
 
 var setCafeList = function () {
 
@@ -68,6 +113,9 @@ var setCafeList = function () {
     )
 }
 
-exports.getCafeList  = getCafeList;
-exports.setCafeList  = setCafeList;
+exports.getCafeList      = getCafeList;
+exports.setCafeList      = setCafeList;
+exports.getOneCafe       = getOneCafe;
+exports.getQuickWord     = getQuickWord;
+exports.getQuickWordList = getQuickWordList;
 export default firebaseApp;
