@@ -36,11 +36,11 @@ class LoadingScreen extends Component {
                 Navigation.startTabBasedApp({
                     tabs: [
                         {
-                            label         : 'Tab1',
+                            label         : '카페',
                             screen        : 'Tab1',
                             icon          : require('../img/home.png'),
                             selectedIcon  : require('../img/home2.png'),
-                            title         : '첫번째화면',
+                            title         : '',
                             subtitle      : '섭타이틀',
                             navigatorStyle: {
                                 navBarHidden:true,
@@ -48,7 +48,7 @@ class LoadingScreen extends Component {
                             }
                         },
                         {
-                            label: 'Tab2',
+                            label: '즐겨찾기',
                             screen: 'Tab2',
                             icon: require('../img/my.png'),
                             selectedIcon    : require('../img/my2.png'),
@@ -60,13 +60,13 @@ class LoadingScreen extends Component {
                     ,
                     appStyle: {
                         tabBarBackgroundColor    : themeColor,
-                        tabBarButtonColor        : '#ffffff',
-                        tabBarSelectedButtonColor: '#63d7cc',
+                        tabBarButtonColor        : 'gray',
+                        tabBarSelectedButtonColor: '#FFFFFF',
 
                     },
                     tabsStyle: { // optional, **iOS Only** add this if you want to style the tab bar beyond the defaults
                         tabBarBackgroundColor    :  themeColor,
-                        tabBarSelectedButtonColor: '#2980B9',
+                        tabBarSelectedButtonColor: '#FFFFFF',
                         // tabBarButtonColor: '#ffffff'
                     }
 

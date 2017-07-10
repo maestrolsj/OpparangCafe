@@ -32,6 +32,12 @@ class RenderRow extends Component {
 
 
     render() {
+
+        var concept="";
+        var i;
+        for(i=0 ; i < this.props.item.concept.length ; i++){
+            concept += this.props.item.concept[i]+ " ";
+        }
         return (
                 <View   style={styles.renderRowView} >
                     <Image source     = {require('../img/cafe1.png')}
@@ -50,7 +56,7 @@ class RenderRow extends Component {
                             <Text style={styles.cafeDistance}>10km</Text>
                         </View>
 
-                        <Text style={styles.cafeConcept}>{this.props.item.concept}</Text>
+                        <Text style={styles.cafeConcept}>{concept}</Text>
                     </View>
                 </View>
 

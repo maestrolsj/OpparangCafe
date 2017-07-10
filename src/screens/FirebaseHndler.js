@@ -26,8 +26,8 @@ var getCafeList = function (limit) {
     return new Promise(
         function (resolve, reject) {
 
-           var itemsRef = firebaseApp.database().ref('CafeList').orderByChild('favorite').limitToFirst(limit);
-         //   var itemsRef = firebaseApp.database().ref('CafeList').orderByChild('address2').startAt('길상');
+             var itemsRef = firebaseApp.database().ref('CafeList').orderByChild('favorite').limitToFirst(limit);
+         //   var itemsRef = firebaseApp.database().ref('CafeList').orderByChild('address1').equalTo('김포');
            var result=[];
 
             itemsRef.once('value', (snap) => {
@@ -43,6 +43,27 @@ var getCafeList = function (limit) {
     )
 }
 
+
+var getLocalCafe = function (local) {
+
+    return new Promise(
+        function (resolve, reject) {
+
+            var result = [];
+
+            console.log("###### >>> Filered >> " + local);
+            var itemsRef = firebaseApp.database().ref('CafeList').orderByChild('address1').equalTo(local);
+
+            itemsRef.once('value', (snap) => {
+
+                snap.forEach((child) => {
+                    result.push(child.val());
+                    resolve(result);
+                });
+            });
+        }
+    )
+}
 
 var getOneCafe = function (searchWord) {
 
@@ -60,7 +81,8 @@ var getOneCafe = function (searchWord) {
     )
 }
 
-var getQuickWord = function () {
+var getQuickWord = function (local) {
+
 
     return new Promise(
         function (resolve, reject) {
@@ -118,4 +140,5 @@ exports.setCafeList      = setCafeList;
 exports.getOneCafe       = getOneCafe;
 exports.getQuickWord     = getQuickWord;
 exports.getQuickWordList = getQuickWordList;
+exports.getLocalCafe     = getLocalCafe;
 export default firebaseApp;
